@@ -1,0 +1,15 @@
+{
+    "labels": {
+        "background": "0",
+        "lhaima": "1",
+        "rhaima": "2"
+    },
+    "channel_names": {
+        "0": "MRI"
+    },
+    "name": "s00",
+    "numTraining": 203,
+    "release": "1.1 14/08/2018",
+    "tensorImageSize": "3D",
+    "file_ending": ".nii.gz"
+}
