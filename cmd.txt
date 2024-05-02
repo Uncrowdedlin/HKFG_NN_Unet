@@ -1,0 +1,26 @@
+$Env:nnUNet_raw = "/media/hyhz/软件/HJR2024/nnUNet-2.4.2/data/nnUNet_raw"
+$Env:nnUNet_preprocessed = "/media/hyhz/软件/HJR2024/nnUNet-2.4.2/data/preprocessed"
+$Env:nnUNet_results = "/media/hyhz/软件/HJR2024/nnUNet-2.4.2/data/nnUNet_results"
+nnUNetv2_plan_and_preprocess -d 005 -pl nnUNetResEncUNetMPlans
+nnUNetv2_plan_and_preprocess -d 005 -pl nnUNetPlannerResEncM
+nnUNetv2_train 005 2d 0 -p nnUNetResEncUNetMPlans
+nnUNetv2_train 005 2d 1
+nnUNetv2_train 005 2d 2
+nnUNetv2_train 005 2d 3
+nnUNetv2_train 005 2d 4
+nnUNetv2_train 005 3d_fullres 0 -p nnUNetResEncUNetMPlans
+nnUNetv2_train 005 3d_fullres 1 -p nnUNetResEncUNetMPlans
+nnUNetv2_train 005 3d_fullres 2 -p nnUNetResEncUNetMPlans
+nnUNetv2_train 005 3d_fullres 3 -p nnUNetResEncUNetMPlans
+nnUNetv2_train 005 3d_fullres 4 -p nnUNetResEncUNetMPlans
+nnUNetv2_train 005 3d_fullres 5 --c  -num_gpus 2
+Dataset005_MRI/imagesTr/s001_0000.nii.gz
+$Env:CUDA_VISIBLE_DEVICES = 0
+
+---------------predict---------------
+nnUNetv2_find_best_configuration 005 -c 3d_fullres -f 0 1 2 3  -p nnUNetResEncUNetMPlans
+nnUNetv2_predict -d Dataset005_MRI -i /media/hyhz/软件/HJR2024/nnUNet-2.4.2/data/raw/Dataset005_MRI/imgesTs -o predict -f 0 1 2 3 -tr nnUNetTrainer -c 3d_fullres -p nnUNetResEncUNetMPlans --save_probabilities
+nnUNetv2_ensemble -i predict -o MRI_ensemble -np 8
+nnUNetv2_apply_postprocessing -i MRI_ensemble -o MRI_predict_PP -pp_pkl_file /media/hyhz/软件/HJR2024/nnUNet-2.4.2/data/results/Dataset005_MRI/nnUNetTrainer__nnUNetResEncUNetMPlans__3d_fullres/crossval_results_folds_0_1_2_3_4/postprocessing.pkl -np 8 -plans_json /media/hyhz/软件/HJR2024/nnUNet-2.4.2/data/results/Dataset005_MRI/nnUNetTrainer__nnUNetResEncUNetMPlans__3d_fullres/crossval_results_folds_0_1_2_3_4/plans.json
+
+nnUNetv2_download_pretrained_model Dataset005_MRI
